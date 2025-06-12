@@ -293,6 +293,11 @@ export const enterpriseAppCheck = async (
   orgId: string,
   errorMessage: string
 ) => {
-  // ✅ Enterprise features unlocked - all app connections allowed
-  return;
+  if (APP_CONNECTION_PLAN_MAP[appConnection] === AppConnectionPlanType.Enterprise) {
+    const plan = await licenseService.getPlan(orgId);
+    if (!plan.enterpriseAppConnections)
+      throw new BadRequestError({
+        message: errorMessage
+      });
+  }
 };
